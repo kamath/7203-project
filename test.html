@@ -1,0 +1,146 @@
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+    <title>LaTeX to SVG</title>
+    <style>
+        .vertical-align-center path {
+            stroke-dasharray: 10000;
+            stroke-dashoffset: 10000;
+            animation: dash 2s linear forwards;
+        }
+
+        @keyframes dash {
+            from {
+                stroke-width: 15px;
+                fill: transparent;
+            }
+
+            50% {
+                fill: transparent;
+            }
+            
+            75% {
+                stroke-dashoffset: 0;
+                stroke-width: 15px;
+            }
+
+            100% {
+                stroke-width: 0;
+            }
+        }
+
+        .math {
+            height: 500px; overflow: hidden;
+            width: 100%;
+        }
+
+        .vertical-align-center {
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+            vertical-align: middle;
+        }
+    </style>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <script>
+        MathJax = {
+            svg: {
+                fontCache: 'local'
+            }
+        };
+    </script>
+    <script src="mathjax3/tex-svg.js" type="text/javascript"></script>
+    <div class="container" style="margin-top: 50px">
+        <div class="slide">
+            <div class="math" toDisplay="" scale="45" style="height: 0;"></div>
+            <div class="desc">
+                <h1>T-SNE</h1>
+                <h3>MATH 7203 Mini-Project</h3>
+                <h4>Anirudh Kamath</h4>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="math" toDisplay="x_i \in R^D; y_i \in R^M" scale="45"></div>
+            <div class="desc">
+                <h3>Data Point \(x_i\)</h3>
+                <p>A <b>data point</b> is a point \( x_i \) in the original data space \( R^D \), where \(D = 64\) is the <b>dimensionality</b> of the data space</p>
+                <p>A <b>map point</b> is a point \( y_i \) in the map space \( R^M; M < D \)</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="math" toDisplay="p_{j|i} = \frac{\exp(-\left\lVert x_i - x_j \right\rVert^2 / 2\sigma^2_i)}{\sum_{k \neq i}^{}{\exp(-\left\lVert x_i - x_k \right\rVert^2 / 2\sigma^2_i)}}"></div>
+            <div class="desc">
+                <h3>Conditional Similarity Metric</h3>
+                <p>How do we choose the positions of the map points? We want to conserve the structure of the data. More specifically, if two data points are close together, we want the two corresponding map points to be close too.</p>
+                <p>This measures how close \(x_j\)
+                    is from \(x_i\), considering a Gaussian distribution around \(x_i\)
+                    with a given variance \(\sigma_i^2\). 
+                    This variance is different for every point; it is chosen such that points in dense areas are given a smaller variance than points in sparse areas. The original paper details how this variance is computed exactly.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="math" toDisplay="p_{ij} = \frac{p_{j|i} + p_{i|j}}{2N}"></div>
+            <div class="desc">
+                <h3>Data Point Matrix from Symmetrized Conditional Similarity</h3>
+                <p>How do we choose the positions of the map points? We want to conserve the structure of the data. More specifically, if two data points are close together, we want the two corresponding map points to be close too.</p>
+                <p>This measures how close \(x_j\)
+                    is from \(x_i\), considering a Gaussian distribution around \(x_i\)
+                    with a given variance \(\sigma_i^2\). 
+                    This variance is different for every point; it is chosen such that points in dense areas are given a smaller variance than points in sparse areas. The original paper details how this variance is computed exactly.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="math" toDisplay="q_{ij} = \frac{(1 + \left\lVert x_i - x_j \right\rVert^2)^{-1}}{\sum_{k \neq i}^{}{(1 + \left\lVert x_i - x_k \right\rVert^2)^{-1}}}"></div>
+            <div class="desc">
+                <h3>Map Point Similarity Matrix</h3>
+                <p>This is the same idea as for the data points, but with a different distribution (t-Student with one degree of freedom, or Cauchy distribution, instead of a Gaussian distribution).</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="math" toDisplay="q_{ij} \tilde{} p_{ij}"></div>
+            <div class="desc">
+                <h3>End Goal</h3>
+                <p>Whereas the data similarity matrix \(p_{ij}\) is fixed, the map similarity matrix \(q_{ij}\)  depends on the map points. What we want is for these two matrices to be as close as possible. This would mean that similar data points yield similar map points.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="math" toDisplay="KL(P||Q) = \sum_{i, j}^{}{}p_{ij}\log\frac{p_{ij}}{q_{ij}}"></div>
+            <div class="desc">
+                <h3>KL Divergence between Distributions</h3>
+                <p>Let’s assume that our map points are all connected with springs. The stiffness of a spring connecting points \(i\) and \(j\) depends on the mismatch between the similarity of the two data points and the similarity of the two map points, that is, \(p_{ij} - q_{ij}\). Now, we let the system evolve according to the laws of physics. If two map points are far apart while the data points are close, they are attracted together. If they are nearby while the data points are dissimilar, they are repelled.</p>
+                <p>The final mapping is obtained when the equilibrium is reached.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="math" toDisplay="\frac{\partial KL}{\partial y_i} = 4\sum_{j}(p_{ij}- q_{ij})u_{ij}\frac{\left\lVert x_i - x_j \right\rVert}{1 + \left\lVert x_i - x_j \right\rVert^2}"></div>
+            <div class="desc">
+                <h3>Minimize KL Divergence via Gradient Descent</h3>
+                <p>Here, \(u_{ij}\) is a unit vector going from \(y_j\)
+                    to \(y_i\). This gradient expresses the sum of all spring forces applied to map point \(i\).</p>
+            </div>
+        </div>
+
+        <span style="display: inline;"><button onclick="prevSlide()">Prev</button></span>
+        <span style="display: inline;"><button onclick="nextSlide()">Next</button></span>
+        <span style="display: inline;"><p id="slidenums"></p></span>
+    </div>
+    <script src="mathDisplay.js"></script>
+</body>
+</html>
