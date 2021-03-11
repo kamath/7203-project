@@ -17,11 +17,15 @@ const nextSlide = () => {
     if (i + 1 < slides.length) i++;
     console.log("TO RENDER", slides[i].slice(1))
     render();
+    // window.scrollTo(0,document.body.scrollHeight);
+    // scrollUp()
+    $("body").animate({ scrollTop: $(document).height() }, "slow");
 }
 
 const prevSlide = () => {
     if (i > 0) i--;
     console.log("TO RENDER", slides[i].slice(1))
+    $("body").animate({ scrollTop: 0 }, "slow");
     render();
 }
 

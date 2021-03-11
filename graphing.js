@@ -206,93 +206,231 @@ function concentricGood() {
         .then(makeChart);
 }
 
-function scatterLine() {
-    var ctx = document.getElementById('scatterLine').getContext('2d');
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            datasets: [{
-                label: 'Bar Dataset',
-                data: [{ x: 20, y: 30 }, { x: 20, y: 50 }, { x: 20, y: 70 }],
-                fill: false,
-                borderWidth: 5,
-                borderColor: 'grey'
-            }, {
-                label: 'Line Dataset',
-                data: [{ x: 50, y: 30 }, { x: 20, y: 50 }],
-                type: 'scatter'
-            }]
-        }
-    });
-}
+function moonsBad() {
+    var ctx = document.getElementById('moonsBad').getContext('2d');
 
-Plotly.d3.csv('swissRoll.csv', function(err, rows) {
-    function unpack(rows, key) {
-        return rows.map(function(row) { return row[key]; });
+    function makeChart(players) {
+        // players is an array of objects where each object is something like:
+        // {
+        //   "Name": "Steffi Graf",
+        //   "Weeks": "377",
+        //   "Gender": "Female"
+        // }
+        console.log("PLAYERS", players)
+
+        var playerLabels = players.map(function(d) {
+            return d.Name;
+        });
+        var weeksData = players.map(function(d) {
+            return { x: d.x, y: d.y };
+        });
+        var colors = players.map(function(d) {
+            return (d.badColor === "1") ? "#ff6384" : "#36a2eb"
+        })
+
+        var chart = new Chart(ctx, {
+            type: "scatter",
+            options: {
+                aspectRatio: 1,
+                maintainAspectRatio: true,
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: 'k-NN Clustering',
+                    fontSize: 20
+                },
+                scales: {
+                    xAxes: [{
+                        gridLines: {
+                            display: true
+                        },
+                        ticks: {
+                            display: false
+                        }
+                    }],
+                    yAxes: [{
+                        gridLines: {
+                            display: true
+                        },
+                        ticks: {
+                            display: false
+                        }
+                    }],
+                }
+            },
+            data: {
+                // labels: playerLabels,
+                datasets: [{
+                    data: weeksData,
+                    backgroundColor: colors
+                }]
+            }
+        });
     }
 
-    var trace1 = {
-        x: unpack(rows, 'x1'),
-        y: unpack(rows, 'y1'),
-        z: unpack(rows, 'z1'),
-        mode: 'markers',
-        marker: {
-            size: 12,
-            line: {
-                color: 'rgba(217, 217, 217, 0.14)',
-                width: 0.5
+    // Request data using D3
+    d3
+        .csv("moons.csv")
+        .then(makeChart);
+}
+
+function moonsGood() {
+    var ctx = document.getElementById('moonsGood').getContext('2d');
+
+    function makeChart(players) {
+        // players is an array of objects where each object is something like:
+        // {
+        //   "Name": "Steffi Graf",
+        //   "Weeks": "377",
+        //   "Gender": "Female"
+        // }
+        console.log("PLAYERS", players)
+
+        var playerLabels = players.map(function(d) {
+            return d.Name;
+        });
+        var weeksData = players.map(function(d) {
+            return { x: d.x, y: d.y };
+        });
+        var colors = players.map(function(d) {
+            return (d.rightColor === "1") ? "#ff6384" : "#36a2eb"
+        })
+
+        var chart = new Chart(ctx, {
+            type: "scatter",
+            options: {
+                aspectRatio: 1,
+                maintainAspectRatio: true,
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: 'Spectral Clustering',
+                    fontSize: 20
+                },
+                borderWidth: 0,
+                scales: {
+                    xAxes: [{
+                        gridLines: {
+                            display: true
+                        },
+                        ticks: {
+                            display: false
+                        }
+                    }],
+                    yAxes: [{
+                        gridLines: {
+                            display: true
+                        },
+                        ticks: {
+                            display: false
+                        }
+                    }],
+                }
             },
-            opacity: 0.8
-        },
-        type: 'scatter3d'
-    };
-
-    var trace2 = {
-        x: unpack(rows, 'X'),
-        y: unpack(rows, 'Y'),
-        z: unpack(rows, 'Z'),
-        mode: 'markers',
-        marker: {
-            color: 'rgb(127, 127, 127)',
-            size: 12,
-            symbol: 'circle',
-            line: {
-                color: 'rgb(204, 204, 204)',
-                width: 1
+            data: {
+                // labels: playerLabels,
+                datasets: [{
+                    data: weeksData,
+                    backgroundColor: colors
+                }]
             },
-            opacity: 0.8
-        },
-        type: 'scatter3d'
-    };
+        });
+    }
 
-    var data = [trace1, trace2];
-    var layout = {
-        margin: {
-            l: 0,
-            r: 0,
-            b: 0,
-            t: 0
-        }
-    };
-    Plotly.newPlot('myDiv', data, layout);
-});
+    // Request data using D3
+    d3
+        .csv("moons.csv")
+        .then(makeChart);
+}
 
-var g = new Dracula.Graph();
+function NBA() {
+    var ctx = document.getElementById('NBA').getContext('2d');
 
-g.addEdge("strawberry", "cherry");
-g.addEdge("strawberry", "apple");
-g.addEdge("strawberry", "tomato");
+    function makeChart(players) {
+        // players is an array of objects where each object is something like:
+        // {
+        //   "Name": "Steffi Graf",
+        //   "Weeks": "377",
+        //   "Gender": "Female"
+        // }
+        console.log("PLAYERS", players)
 
-g.addEdge("tomato", "apple");
-g.addEdge("tomato", "kiwi");
+        var playerLabels = players.map(function(d) {
+            return d.player;
+        });
+        var weeksData = players.map(function(d) {
+            return { x: d.x, y: d.y, label: d.player };
+        });
+        var colors = players.map(function(d) {
+            const COLOR_ARR = ['#264653', '#2a9d8f', '#e9c46a', '#f4a261', '#e76f51'];
+            console.log("COLOR", COLOR_ARR[parseInt(d.cluster)])
+            return COLOR_ARR[parseInt(d.cluster)]
+        })
 
-g.addEdge("cherry", "apple");
-g.addEdge("cherry", "kiwi");
+        var chart = new Chart(ctx, {
+            type: "scatter",
+            options: {
+                aspectRatio: 1,
+                maintainAspectRatio: true,
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: 'Player Matchups',
+                    fontSize: 20
+                },
+                borderWidth: 0,
+                scales: {
+                    xAxes: [{
+                        gridLines: {
+                            display: true
+                        },
+                        ticks: {
+                            display: false
+                        }
+                    }],
+                    yAxes: [{
+                        gridLines: {
+                            display: true
+                        },
+                        ticks: {
+                            display: false
+                        }
+                    }],
+                },
+                tooltips: {
+                    callbacks: {
+                        label: function(tooltipItem, data) {
+                            console.log("TOOLTIPITEM", tooltipItem, data)
+                            var label = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index].label;
+                            console.log("LABEL", label)
+        
+                            if (label) {
+                                label += ': ';
+                            }
+                            label += Math.round(tooltipItem.yLabel * 100) / 100;
+                            return label;
+                        }
+                    }
+                }
+            },
+            data: {
+                // labels: playerLabels,
+                datasets: [{
+                    data: weeksData,
+                    backgroundColor: colors
+                }]
+            },
+        });
+    }
 
-var layouter = new Dracula.Layout.Spring(g);
-layouter.layout();
-
-const drawNodes = () => {
-    var renderer = new Dracula.Renderer.Raphael('canvas', g, 400, 300);
-    renderer.draw();
+    // Request data using D3
+    d3
+        .csv("nba_clusters.csv")
+        .then(makeChart);
 }
