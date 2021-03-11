@@ -7,7 +7,6 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
-
         .animation-math path {
             stroke-dasharray: 10000;
             stroke-dashoffset: 10000;
@@ -43,12 +42,12 @@
             transform: translateY(-50%);
             vertical-align: middle;
         }
-
+        
         h1 {
             font-family: 'Playfair Display';
             font-weight: 600 !important;
         }
-
+        
         * {
             font-family: 'Lato';
             line-height: 1.5 !important;
@@ -83,15 +82,15 @@
             <span style="display: inline;"><button class="btn black" onclick="nextSlide()"><i class="material-icons">navigate_next</i></button></span>
         </div>
     </div>
-            
+
     <span style="display: inline;"></span><button class="btn black" onclick="prevSlide()"><i class="material-icons">navigate_before</i></button></span>
-        <span style="display: inline;"><button class="btn black" onclick="nextSlide()"><i class="material-icons">navigate_next</i></button></span>
+    <span style="display: inline;"><button class="btn black" onclick="nextSlide()"><i class="material-icons">navigate_next</i></button></span>
     <span style="display: inline;"><p id="slidenums"></p></span>
     <div class="container" style="margin-top: 50px; margin-bottom: 50px;">
 
         <div class="slide">
             <div class="desc">
-                <h1>Spectral Clustering with Laplacian Eigenmaps</h1>
+                <h1><a class="black-text animation-math">\(\text{Spectral Clustering with Laplacian Eigenmaps}\)</a></h1>
                 <h3>MATH 7203 Mini-Project</h3>
                 <h4>Anirudh Kamath</h4>
             </div>
@@ -100,8 +99,7 @@
         <div class="slide">
             <h1>Spectral clustering</h1>
             <h5>- Derives a graph from the given data and uses the eigenvectors of this graph's Laplacian matrix to partition the data.</h5>
-            <h5>- Captures the "geometry" of the data and part of a broader subclass of
-                manifold learning.
+            <h5>- Captures the "geometry" of the data and part of a broader subclass of manifold learning.
             </h5>
             <h5>- <b>Manifold Learning:</b> Linear algorithms don't work when a nonlinear transformation is required.</h5>
             <h5>- Other methods in this umbrella include t-SNE and Isomap</h5>
@@ -110,8 +108,7 @@
         <div class="slide">
             <h1>Spectral clustering</h1>
             <h5>- Derives a graph from the given data and uses the eigenvectors of this graph's Laplacian matrix to partition the data.</h5>
-            <h5>- Captures the "geometry" of the data and part of a broader subclass of
-                manifold learning.
+            <h5>- Captures the "geometry" of the data and part of a broader subclass of manifold learning.
             </h5>
             <h5>- <b>Manifold Learning:</b> Linear algorithms don't work when a nonlinear transformation is required.</h5>
             <h5>- Other methods in this umbrella include t-SNE and Isomap</h5>
@@ -215,6 +212,16 @@
             <div class="math-animate dont-animate" toDisplay="\lambda_1 \leq \lambda_2 \leq \lambda_3 \leq \dots \leq \lambda_n" scale="40"></div>
             <h4>We then form a matrix \(\Phi\) with </h4>
             <div class="math-animate" toDisplay="\Phi = \begin{bmatrix} - & \vec{\phi}_1 & - \\ - & \vec{\phi}_2 & - \\ & \vdots \\ - & \vec{\phi}_n & - \end{bmatrix}"></div>
+        </div>
+        <div class="slide">
+            <h1>Step 3: Compute Laplacian Eigenvectors</h1>
+            <h4>\(\phi_1, \phi_2, \dots, \phi_k\) corresponding to the \(k\) smallest eigenvalues of \(L\) or \(\mathcal{L}\)</h4>
+            <div class="math-animate dont-animate" toDisplay="\mathcal{L}\phi_l = \lambda_l\phi_l,\;1 \leq l \leq n" scale="40"></div>
+            <h4>\(\phi_1, \phi_2, \dots, \phi_n\) then form an orthonormal basis in \(R^n\) with eigenvalues sorted from lowest to highest:</h4>
+            <div class="math-animate dont-animate" toDisplay="\lambda_1 \leq \lambda_2 \leq \lambda_3 \leq \dots \leq \lambda_n" scale="40"></div>
+            <h4>We then form a matrix \(\Phi\) with </h4>
+            <div class="math-animate dont-animate" toDisplay="\Phi = \begin{bmatrix} - & \vec{\phi}_1 & - \\ - & \vec{\phi}_2 & - \\ & \vdots \\ - & \vec{\phi}_n & - \end{bmatrix}"></div>
+            <h3>This is called the <a class="black-text animation-math">\(\text{Laplacian Eigenmap}\)</a></h3>
         </div>
         <div class="slide">
             <h1>Step 4: K-Means Clustering on Eigenvector Matrix</h1>
