@@ -1,81 +1,86 @@
 'use strict';
 var equation = null;
 var svgSourceCodeToDownload = '';
-var renderOptions = {em: 16, ex: 8, containerWidth: 579, display: true, scale: 50, lineWidth: 1000000};
+var renderOptions = { em: 16, ex: 8, containerWidth: 579, display: true, scale: 50, lineWidth: 1000000 };
 var i = 0;
-var els = [];
-var descs = [];
+var slides = [];
 
 // Schedule rendering
 Array.prototype.forEach.call(document.getElementsByClassName("slide"), function(el) {
-    els.push(el.getElementsByClassName("math")[0])
-    descs.push(el.getElementsByClassName("desc")[0])
+    var animations = [];
+    Array.prototype.forEach.call(el.getElementsByClassName("math-animate"), (mathEl) => animations.push(mathEl));
+    console.log("ANIMATIONS", animations)
+    slides.push([el, ...animations])
 });
 
-render(els[i].getAttribute("toDisplay"), els[i]);
-descs[i].style.display = "block"
-
 const nextSlide = () => {
-    console.log("TO REMOVE", els[i].getElementsByClassName('imgBox')[0])
-    els[i].removeChild(els[i].getElementsByClassName('imgBox')[0]);
-    if(i + 1 < els.length) i++; 
-    render(els[i].getAttribute("toDisplay"), els[i]); 
-    descs[i].style.display = "block"
+    if (i + 1 < slides.length) i++;
+    console.log("TO RENDER", slides[i].slice(1))
+    render();
 }
 
 const prevSlide = () => {
-    console.log("TO REMOVE", els[i].getElementsByClassName('imgBox')[0])
-    els[i].removeChild(els[i].getElementsByClassName('imgBox')[0]);
-    if(i > 0) i--; 
-    render(els[i].getAttribute("toDisplay"), els[i]); 
-    descs[i].style.display = "block"
+    if (i > 0) i--;
+    console.log("TO RENDER", slides[i].slice(1))
+    render();
 }
+
+render();
 
 // Rendering
 
-function render(text, dom) {
-    document.getElementById("slidenums").innerText = `${i + 1} / ${els.length}`;
-    els.forEach((x, i) => {els[i].style.display = "none"; descs[i].style.display = "none";})
-    dom.style.display = "block"
+function render() {
+    document.getElementById("slidenums").innerText = `${i + 1} / ${slides.length}`;
+    slides.forEach((slide, i) => {
+        slide[0].style.display = "none";
+    })
 
-    var element = MathJax.tex2svg(text, renderOptions);
-    dom.innerHTML = '';
+    Array.prototype.forEach.call(slides[i][0].getElementsByTagName("canvas"), (dom) => dom.click())
 
-    var svg = element.firstElementChild;
+    var slide = slides[i][0];
+    slide.style.display = "block";
 
-    svg.setAttribute('width', exToPx(svg.getAttribute('width')));
-    svg.setAttribute('height', exToPx(svg.getAttribute('height')));
-    svg.setAttribute('class', 'vertical-align-center')
+    slides[i].slice(1).forEach(dom => {
+        var element = MathJax.tex2svg(dom.getAttribute("toDisplay"), renderOptions);
+        dom.innerHTML = '';
 
-    function exToPx(value) {
-        var match = value.match(/^(.*)ex$/);
-        console.log("MATCH", match)
-        return match ? (parseFloat(match[1]) * parseFloat(els[i].getAttribute("scale"))).toFixed(3) + 'px' : value;
-    }
+        var svg = element.firstElementChild;
 
-    var svgStyle = document.getElementById('MJX-SVG-styles');
-    if (svgStyle && hasClass(svg)) {
-        console.log('add style');
-        var style = document.createElementNS(svg.namespaceURI, 'style');
-        style.textContent = svgStyle.textContent;
-        svg.insertBefore(style, svg.firstElementChild);
-    }
+        svg.setAttribute('width', exToPx(svg.getAttribute('width')));
+        svg.setAttribute('height', exToPx(svg.getAttribute('height')));
+        if (dom.getAttribute("class").indexOf("dont-animate") == -1) svg.setAttribute('class', 'animation-math vertical-align-center')
+        else svg.setAttribute('class', 'vertical-align-center')
 
-    function hasClass(element) {
-        for (var child = element.firstElementChild; child; child = child.nextElementSibling)
-            if (child.classList.length || hasClass(child)) return true;
-        return false;
-    }
+        function exToPx(value) {
+            var match = value.match(/^(.*)ex$/);
+            console.log("MATCH", match)
+            return match ? (parseFloat(match[1]) * parseFloat(dom.getAttribute("scale"))).toFixed(3) + 'px' : value;
+        }
 
-    var base64SourceCode = base64Encode(bytesFromText(svgSourceCodeToDownload));
-    var img = document.createElement('div');
-    img.style.height = "100%";
-    img.style.marginLeft = "auto";
-    img.style.marginRight = "auto";
-    img.setAttribute("class", "imgBox")
-    img.innerHTML = svg.outerHTML;
-    console.log("CODE", svg.outerHTML)
-    dom.appendChild(img);
+        var svgStyle = document.getElementById('MJX-SVG-styles');
+        if (svgStyle && hasClass(svg)) {
+            console.log('add style');
+            var style = document.createElementNS(svg.namespaceURI, 'style');
+            style.textContent = svgStyle.textContent;
+            svg.insertBefore(style, svg.firstElementChild);
+        }
+
+        function hasClass(element) {
+            for (var child = element.firstElementChild; child; child = child.nextElementSibling)
+                if (child.classList.length || hasClass(child)) return true;
+            return false;
+        }
+
+        var base64SourceCode = base64Encode(bytesFromText(svgSourceCodeToDownload));
+        var img = document.createElement('div');
+        img.style.height = "250px";
+        img.style.marginLeft = "auto";
+        img.style.marginRight = "auto";
+        img.setAttribute("class", "imgBox")
+        img.innerHTML = svg.outerHTML;
+        console.log("CODE", svg.outerHTML)
+        dom.appendChild(img);
+    })
 }
 
 function base64Encode(bytes) {
@@ -111,12 +116,12 @@ function base64Encode(bytes) {
 }
 
 // Returns the number of bytes required to encode a UTF-8 char.
-function utf8CharLength(charCode) {	// Uint ⇒ Uint
+function utf8CharLength(charCode) { // Uint ⇒ Uint
     return charCode < 0x80 ? 1 : charCode < 0x800 ? 2 : charCode < 0x10000 ? 3 : charCode < 0x200000 ? 4 : charCode < 0x4000000 ? 5 : 6;
 }
 
 // Adds a single char to a byte array at position "offset". Returns the new offset after adding the char.
-function addUtf8CharToBytes(bytes, offset, charCode) {	// Uint8Array, Uint, Uint ⇒ Uint
+function addUtf8CharToBytes(bytes, offset, charCode) { // Uint8Array, Uint, Uint ⇒ Uint
     var position = offset;
     if (charCode < 0x80) {
         bytes[position++] = charCode;
@@ -152,7 +157,7 @@ function addUtf8CharToBytes(bytes, offset, charCode) {	// Uint8Array, Uint, Uint
 }
 
 // Converts a string into a byte array using UTF-8 encoding.
-function bytesFromText(text) {	// String ⇒ Uint8Array
+function bytesFromText(text) { // String ⇒ Uint8Array
     var length = 0;
     for (var i = 0; i < text.length; i++)
         length += utf8CharLength(text.charCodeAt(i));

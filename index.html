@@ -1,560 +1,195 @@
-
-<!DOCTYPE html>
-
 <html lang="en">
+
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width">
-	<link rel="stylesheet" type="text/css" href="/thomas/style.css">
-	<title>LaTeX to SVG</title>
-	<link href="manifest.json" rel="manifest">
-	<meta content="" name="description">
-	<meta content="online latex to svg converter" name="keywords">
-	<style>
-		div.label { color: #666; font-size: 13px; margin-top: 20px; position: relative }
-		div.label > div.right { bottom: 0; position: absolute; right: 0 }
-		div.textarea { margin-top: 2px }
-		div#environment > span { background: #eee; border-radius: 3px; cursor: pointer; display: inline-block; margin-left: 2px; padding: 3px 10px }
-		div#autoButton { cursor: pointer }
-		div#autoButton > div { border: 1px solid #666; border-radius: 3px; display: inline-block; height: 10px; position: relative; top: 2px; width: 10px }
-		div#autoButton.true > div { background-color: #666 }
-		div.buttonLine { margin: 18px 0; position: relative }
-		div.buttonLine span.button { background-color: #3366ff; border-radius: 3px; color: white; cursor: pointer; font-weight: bold; padding: 10px 18px }
-		div.buttonLine > div.right { position: absolute; right: 0; top: 0 }
-		div.buttonLine span.toggle { border: 1px solid #666; border-radius: 3px; color: #666; cursor: pointer; font-size: 13px; padding: 5px 10px }
-		div.buttonLine span.toggle.true { background-color: #666; color: white }
-		div.panel { display: none; margin-top: 30px }
-		div.panel.true { display: block }
-		div#plainSVG > svg { border: 1px dashed #aaa }
-		div#plainSVG > img { border: 1px dashed #aaa }
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Numerical Analysis Mini-Project</title>
+    <style>
+        .animation-math path {
+            stroke-dasharray: 10000;
+            stroke-dashoffset: 10000;
+            animation: dash 2s linear forwards;
+        }
+        
+        @keyframes dash {
+            from {
+                stroke-width: 15px;
+                fill: transparent;
+            }
+            50% {
+                fill: transparent;
+            }
+            75% {
+                stroke-dashoffset: 0;
+                stroke-width: 15px;
+            }
+            100% {
+                stroke-width: 0;
+            }
+        }
+        
+        .math {
+            height: 500px;
+            overflow: hidden;
+            width: 100%;
+        }
+        
+        .vertical-align-center {
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+            vertical-align: middle;
+        }
+    </style>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 
-		div.settings { background-color: #eee; border-radius: 3px; margin: 2px 0; padding: 20px 20px 10px 20px; position: relative }
-		div.settings input { background: white; border: none; padding: 2px }
-		div#scalingPreview { background: #fff; border-radius: 3px; height: 90px; line-height: 90px; overflow: hidden; padding: 5px; position: absolute; right: 20px; text-align: center; top: 20px; white-space: nowrap; width: 130px }
-		div#scalingPreview > div { background: #000; display: inline-block; height: 1ex; width: 1ex }
-		div#scalingValue { color: #999; padding: 0 5px; position: absolute; right: 20px; text-align: center; top: 126px; width: 130px }
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
-		div.option { margin-bottom: 10px; padding-left: 20px; position: relative }
-		div.option > div:first-child { border: 1px solid #000; border-radius: 3px; height: 13px; left: 0; position: absolute; top: 0; width: 13px }
-		div.option.true > div:first-child { background-color: #000 }
-		div.option > div > span { cursor: pointer }
-	</style>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js"></script>
 </head>
+
 <body>
-
-<div class="top">
-	<div>
-		<a href="/thomas/" style="color:#eeeeee; text-decoration:none; font-weight:bold">Thomas Lochmatter</a> <span style="font-weight:bold; padding:0 5px">·</span>
-		<a href="/scatter/" style="color:#eeeeee; text-decoration:none; font-weight:bold">Scatter</a> <span style="font-weight:bold; padding:0 5px">·</span>
-		<a href="/secret-sharing/" style="color:#eeeeee; text-decoration:none; font-weight:bold">Secret Sharing</a> <span style="font-weight:bold; padding:0 5px">·</span>
-		<a href="/gps-bearing/" style="color:#eeeeee; text-decoration:none; font-weight:bold">GPS bearing</a> <span style="font-weight:bold; padding:0 5px">·</span>
-		<a href="/latex-to-svg/" style="color:#eeeeee; text-decoration:none; font-weight:bold">LaTeX to SVG</a> <span style="font-weight:bold; padding:0 5px">·</span>
-		<a href="/unicode/" style="color:#eeeeee; text-decoration:none; font-weight:bold">Unicode</a>
-	</div>
-</div>
-
-<script>
-MathJax = {
-	tex: {
-		inlineMath: []
-	},
-	svg: {
-		fontCache: 'local'
-	}
-};
-</script>
-<script src="/mathjax3/tex-svg.js" type="text/javascript"></script>
-
-<div class="title">
-	<div>
-		<h1>LaTeX to SVG</h1>
-		<div style="font-size: 24px">Convert LaTeX equations to SVG using <a href="http://mathjax.org">MathJax</a></div>
-	</div>
-</div>
-
-<div class="content"><div><div>
-
-	<div class="label">
-		Your <a href="https://en.wikibooks.org/wiki/LaTeX/Mathematics" target="_blank">LaTeX equation</a>
-		<div class="right" id="environment"></div>
-	</div>
-	<div class="textarea" style="background-color: #f5f5f5"><textarea id="input" style="height: 180px">x = \sin \left( \frac{\pi}{2} \right)</textarea></div>
-	<div class="label">
-		Rendered equation (SVG)
-		<div class="right" id="autoButton" title="Press Ctrl-Enter to render the equation manually.">
-			auto update <div></div>
-		</div>
-	</div>
-	<div style="background-color: #eee; border-radius: 3px; display: none; margin: 2px 0; min-height: 180px; padding: 10px 10px">$$x = \sin{\pi}$$</div>
-	<div id="plainSVG" style="background-color: #eee; border-radius: 3px; margin: 2px 0; min-height: 180px; overflow: hidden; padding: 10px 10px"></div>
-
-	<div class="buttonLine">
-		<span class="button" id="downloadButton">Download SVG</span>
-		<span class="button" id="copyButton" style="display:none">Copy SVG (not working)</span>
-		<div class="right">
-			<span class="toggle" id="svgSourceCodeButton">SVG source code</span>
-			<span class="toggle" id="scalingButton">Settings</span>
-		</div>
-	</div>
-
-	<div class="panel" id="settingsPanel">
-		<div class="label">Scaling</div>
-		<div class="settings" id="scaling">
-			<div class="option">
-				<div></div>
-				<div><span>Use the default scale factor (1 ex = 8 px).</span></div>
-			</div>
-
-			<div class="option">
-				<div></div>
-				<div><span>Scale the equation to match a font.</span></div>
-				<div style="margin: 5px 0 0 0"><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/font" target="_blank">CSS font</a>: <input style="width: 200px" value="20px Lato"></div>
-			</div>
-
-			<div class="option">
-				<div></div>
-				<div><span> Set the scale factor manually.</span></div>
-				<div style="margin: 5px 0 0 0">1 <a href="https://en.wikipedia.org/wiki/X-height" target="_blank">ex</a> = <input style="text-align: center; width: 40px" value="15"> px</div>
-			</div>
-
-			<div id="scalingPreview">
-				<div></div>
-			</div>
-
-			<div id="scalingValue">
-				1 ex = 8 px
-			</div>
-		</div>
-
-		<div class="label">Rendering options</div>
-		<div class="settings">
-			<div class="option" id="displayModeButton">
-				<div></div>
-				<div><span>Display mode</span></div>
-			</div>
-		</div>
-	</div>
-
-	<div class="panel" id="svgSourceCodePanel">
-		<div class="label">SVG source code</div>
-		<div class="textarea"><textarea id="svgSourceCode" style="height: 180px"></textarea></div>
-		<p>Copy-paste the above text into your favorite text editor, and save it as *.svg file.</p>
-	</div>
-
-	<h2>Notes and hints</h2>
-	<ul>
-		<li>You can open/import the downloaded *.svg file with <a href="https://inkscape.org">Inkscape</a> for further editing. Inkscape also allows you to export the equation as PDF document or PNG image.</li>
-		<li>In all modern browsers, you can insert SVG source code directly into a HTML document.</li>
-		<li>Rendering is performed within your browser. If you cache this page, you don't need an internet connection to render equations.</li>
-		<li>The equations are rendered using <a href="http://mathjax.org">MathJax 3</a>, which supports <a href="http://docs.mathjax.org/en/latest/input/tex/macros/index.html">many TeX/LaTeX commands</a>.</li>
-		<li>This has been tested with recent versions of Firefox and Chrome, but may work in other browsers as well.</li>
-		<li>With Chrome, you can add this as a web app to your home screen.</li>
-		<li>If you are using a Mac, you may also like <a href="http://pierre.chachatelier.fr/latexit/latexit-home.php?lang=en">LaTeXiT</a> by Pierre Chatelier.</li>
-	</ul>
-
-	<h2>Questions, Suggestions and Bug Reports</h2>
-	<p>Please direct questions, suggestions, and bug reports to <a href="mailto:thomas.lochmatter@viereck.ch">Thomas Lochmatter</a>.</p>
-
-	<a href="" id="hiddenLink" style="display: none"></a>
-
-	<script>
-	var autoButton = document.getElementById('autoButton');
-	var copyButton = document.getElementById('copyButton');
-	var displayModeButton = document.getElementById('displayModeButton');
-	var downloadButton = document.getElementById('downloadButton');
-	var environment = document.getElementById('environment');
-	var hiddenLink = document.getElementById('hiddenLink');
-	var input = document.getElementById('input');
-	var plainSVG = document.getElementById('plainSVG');
-	var scaling = document.getElementById('scaling');
-	var scalingButton = document.getElementById('scalingButton');
-	var scalingPreview = document.getElementById('scalingPreview');
-	var scalingValue = document.getElementById('scalingValue');
-	var settingsPanel = document.getElementById('settingsPanel');
-	var svgSourceCode = document.getElementById('svgSourceCode');
-	var svgSourceCodeButton = document.getElementById('svgSourceCodeButton');
-	var svgSourceCodePanel = document.getElementById('svgSourceCodePanel');
-	</script>
-
-	<script>
-		'use strict';
-		var xmlHeader = '<' + '?xml version="1.0" encoding="UTF-8" standalone="no" ?' + '>\n';
-		var equation = null;
-		var scalingPxPerEx = 8;
-		var svgSourceCodeToDownload = '';
-		var renderOptions = {em: 16, ex: 8, containerWidth: 579, display: true, scale: 1, lineWidth: 1000000};
-
-		// Environments
-		var removedOptions = {};
-		addEnvironment('equation', null);
-		addEnvironment('eqnarray', '');
-		addEnvironment('align', '');
-		addEnvironment('array', '{c}');
-
-		function addEnvironment(label, defaultOptions) {
-			var span = document.createElement('span');
-			environment.appendChild(span);
-			span.textContent = label;
-
-			span.onclick = function(event) {
-				var text = input.value;
-				var match = text.match(/^\s*\\begin\{([a-zA-Z0-9]*)\}(\{[a-zA-Z0-9|]*\}|)\n?([\s\S]*?)\n?\\end\{([a-zA-Z0-9]*)\}\s*$/);
-				if (match) {
-					text = match[3];
-					removedOptions[match[1]] = match[2];
-
-					if (match[1] == 'eqnarray' || match[1] == 'align') {
-						text = text.replace(/\s*&\s*=\s*&\s*/g, ' = ');
-						text = text.replace(/\s*&\s*=\s*/g, ' = ');
-						text = text.replace(/\s*=\s*&\s*/g, ' = ');
-					}
-				}
-
-				if (label == 'eqnarray') {
-					text = text.replace(/\s*=\s*/g, ' & = & ');
-				} else if (label == 'align') {
-					text = text.replace(/\s*=\s*/g, ' & = ');
-				}
-
-				if (defaultOptions != null) text = '\\begin{' + label + '}' + (removedOptions[label] || defaultOptions) + '\n' + text + '\n\\end{' + label + '}';
-				input.value = text;
-				if (autoRender) scheduleRender();
-
-				cancelEvent(event);
-			}
-		}
-
-		// Schedule rendering
-		var renderScheduled = false;
-		scheduleRender();
-
-		function scheduleRender() {
-			if (renderScheduled) return;
-			renderScheduled = true;
-			setTimeout(render, 1000);
-		}
-
-		// Automatic rendering button
-		var autoRender = localStorage.getItem('render automatically') == 'false' ? false : true;
-		autoButton.classList.toggle('true', autoRender);
-
-		autoButton.onclick = function() {
-			autoRender = ! autoRender;
-			autoButton.classList.toggle('true', autoRender);
-			localStorage.setItem('render automatically', autoRender ? 'true' : 'false');
-			if (autoRender) scheduleRender();
-		};
-
-		input.oninput = function(event) {
-			if (autoRender) scheduleRender();
-		};
-
-		document.body.onkeydown = function(event) {
-			if (event.getModifierState('Control') && event.key == 'Enter') {
-				render();
-				cancelEvent(event);
-			}
-		};
-
-		// Rendering
-
-		function render() {
-			renderScheduled = false;
-			var text = input.value;
-
-			var element = MathJax.tex2svg(input.value, renderOptions);
-			plainSVG.innerHTML = '';
-
-			var svg = element.firstElementChild;
-			//plainSVG.appendChild(svg);
-
-			svg.setAttribute('width', exToPx(svg.getAttribute('width')));
-			svg.setAttribute('height', exToPx(svg.getAttribute('height')));
-			svg.removeAttribute('style');
-			svg.removeAttribute('focusable');
-			svg.removeAttribute('role');
-
-			function exToPx(value) {
-				var match = value.match(/^(.*)ex$/);
-				return match ? (parseFloat(match[1]) * scalingPxPerEx).toFixed(3) + 'px' : value;
-			}
-
-			var svgStyle = document.getElementById('MJX-SVG-styles');
-			if (svgStyle && hasClass(svg)) {
-				console.log('add style');
-				var style = document.createElementNS(svg.namespaceURI, 'style');
-				style.textContent = svgStyle.textContent;
-				svg.insertBefore(style, svg.firstElementChild);
-			}
-
-			function hasClass(element) {
-				for (var child = element.firstElementChild; child; child = child.nextElementSibling)
-					if (child.classList.length || hasClass(child)) return true;
-				return false;
-			}
-
-			svgSourceCodeToDownload = xmlHeader + svg.outerHTML;
-			svgSourceCode.value = svgSourceCodeToDownload;
-			svgSourceCode.setSelectionRange(0, svgSourceCode.value.length);
-
-			var base64SourceCode = base64Encode(bytesFromText(svgSourceCodeToDownload));
-			var img = document.createElement('img');
-			img.src = 'data:image/svg+xml;base64,' + base64SourceCode;
-			plainSVG.appendChild(img);
-		}
-
-		downloadButton.onclick = function(event) {
-			if (hiddenLink.href) URL.revokeObjectURL(hiddenLink.href);
-
-			var blob = new Blob([svgSourceCodeToDownload], {type: 'image/svg+xml'});
-			hiddenLink.href = URL.createObjectURL(blob);
-			hiddenLink.download = 'equation.svg';
-			hiddenLink.click();
-		};
-
-		copyButton.onclick = function(event) {
-			var blob = new Blob([svgSourceCodeToDownload], {type: 'image/svg+xml'});
-			var item = new ClipboardItem({'image/svg+xml': blob});
-			navigator.clipboard.write([item]);
-		};
-
-		svgSourceCodeButton.onclick = function(event) {
-			setPanel(svgSourceCodeButton.classList.contains('true') ? null : svgSourceCodeButton);
-			cancelEvent(event);
-		};
-
-		scalingButton.onclick = function(event) {
-			setPanel(scalingButton.classList.contains('true') ? null : scalingButton);
-			cancelEvent(event);
-		};
-
-		function setPanel(button) {
-			svgSourceCodeButton.classList.toggle('true', button == svgSourceCodeButton);
-			svgSourceCodePanel.classList.toggle('true', button == svgSourceCodeButton);
-
-			scalingButton.classList.toggle('true', button == scalingButton);
-			settingsPanel.classList.toggle('true', button == scalingButton);
-		}
-
-		// Settings
-
-		createScalingOptions();
-		createRenderOptions();
-
-		function createScalingOptions() {
-			var defaultOption = createDefaultOption();
-			var fontOption = createFontOption();
-			var fixOption = createFixOption();
-			selectAndUpdate(defaultOption);
-
-			function selectAndUpdate(option) {
-				defaultOption.element.classList.remove('true');
-				fontOption.element.classList.remove('true');
-				fixOption.element.classList.remove('true');
-				option.element.classList.add('true');
-				option.onUpdate();
-			}
-
-			function createOption(element) {
-				var option = {};
-				option.element = element;
-
-				var tick = element.firstElementChild;
-				var span = tick.nextElementSibling.firstElementChild;
-				tick.onclick = span.onclick = function(event) {
-					selectAndUpdate(option);
-					cancelEvent(event);
-				};
-
-				return option;
-			}
-
-			function createDefaultOption() {
-				var option = createOption(scaling.firstElementChild);
-				option.onUpdate = function() { setFixScaling(8); };
-				return option;
-			}
-
-			function createFontOption() {
-				var option = createOption(defaultOption.element.nextElementSibling);
-				var input = option.element.getElementsByTagName('INPUT')[0];
-
-				input.oninput = function(event) {
-					selectAndUpdate(option);
-				};
-
-				option.onUpdate = function() {
-					setFontScaling(input.value);
-				};
-
-				return option;
-			}
-
-			function createFixOption() {
-				var option = createOption(fontOption.element.nextElementSibling);
-				var input = option.element.getElementsByTagName('INPUT')[0];
-
-				input.oninput = function(event) {
-					selectAndUpdate(option);
-				};
-
-				option.onUpdate = function() {
-					var value = parseFloat(input.value);
-					if (isNaN(value)) value = 9;
-					setFixScaling(value);
-				};
-
-				return option;
-			}
-
-			function setFixScaling(value) {
-				scalingPreview.innerHTML = '';
-				scalingPreview.style.font = '16px Lato';
-				scalingPreview.style.lineHeight = '90px';
-				var div = document.createElement('div');
-				div.style.width = value + 'px';
-				div.style.height = value + 'px';
-				div.style.verticalAlign = 'middle';
-				scalingPreview.appendChild(div);
-				setScaleFactor(value);
-			}
-
-			function setFontScaling(value) {
-				scalingPreview.innerHTML = '';
-				scalingPreview.style.font = value;
-				scalingPreview.style.lineHeight = '90px';
-				var div = document.createElement('div');
-				scalingPreview.appendChild(div);
-				scalingPreview.appendChild(document.createTextNode(' text'));
-
-				var rect = div.getBoundingClientRect();
-				setScaleFactor(rect.height);
-			}
-
-			function setScaleFactor(value) {
-				scalingPxPerEx = value;
-				scalingValue.textContent = '1 ex = ' + value.toFixed(3) + ' px';
-				render();
-			}
-		}
-
-		function createRenderOptions() {
-			createToggleButton(displayModeButton, renderOptions.display, function(isChecked) {
-				renderOptions.display = isChecked;
-				render();
-			});
-		}
-
-		function createToggleButton(element, initialValue, onChanged) {
-			var option = {};
-			option.element = element;
-			element.classList.toggle('true', initialValue);
-
-			var tick = element.firstElementChild;
-			var span = tick.nextElementSibling.firstElementChild;
-			tick.onclick = span.onclick = function(event) {
-				var isChecked = ! element.classList.contains('true');
-				element.classList.toggle('true', isChecked);
-				onChanged(isChecked);
-				cancelEvent(event);
-			};
-
-			return option;
-		}
-
-		function cancelEvent(event) {
-			event.stopPropagation();
-			event.preventDefault();
-		}
-
-		function base64Encode(bytes) {
-			var map = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '/'];
-
-			// Add all complete triplets
-			var text = '';
-			for (var i = 0; i < bytes.byteLength - 2; i += 3) {
-				var value = bytes[i] << 16 | bytes[i + 1] << 8 | bytes[i + 2];
-				text += map[(value >> 18) & 0x3f];
-				text += map[(value >> 12) & 0x3f];
-				text += map[(value >> 6) & 0x3f];
-				text += map[value & 0x3f];
-			}
-
-			// Add the remaining bytes
-			var remaining = bytes.byteLength - i;
-			if (remaining == 2) {
-				var value = bytes[i] << 8 | bytes[i + 1];
-				text += map[(value >> 10) & 0x3f];
-				text += map[(value >> 4) & 0x3f];
-				text += map[(value << 2) & 0x3f];
-				text += '=';
-			} else if (remaining == 1) {
-				var value = bytes[i];
-				text += map[(value >> 2) & 0x3f];
-				text += map[(value << 4) & 0x3f];
-				text += '==';
-			}
-
-			// Return the text
-			return text;
-		}
-
-		// Returns the number of bytes required to encode a UTF-8 char.
-		function utf8CharLength(charCode) {	// Uint ⇒ Uint
-			return charCode < 0x80 ? 1 : charCode < 0x800 ? 2 : charCode < 0x10000 ? 3 : charCode < 0x200000 ? 4 : charCode < 0x4000000 ? 5 : 6;
-		}
-
-		// Adds a single char to a byte array at position "offset". Returns the new offset after adding the char.
-		function addUtf8CharToBytes(bytes, offset, charCode) {	// Uint8Array, Uint, Uint ⇒ Uint
-			var position = offset;
-			if (charCode < 0x80) {
-				bytes[position++] = charCode;
-			} else if (charCode < 0x800) {
-				bytes[position++] = 0xc0 | (charCode >>> 6);
-				bytes[position++] = 0x80 | (charCode & 0x3f);
-			} else if (charCode < 0x10000) {
-				bytes[position++] = 0xe0 | (charCode >>> 12);
-				bytes[position++] = 0x80 | ((charCode >>> 6) & 0x3f);
-				bytes[position++] = 0x80 | (charCode & 0x3f);
-			} else if (charCode < 0x200000) {
-				bytes[position++] = 0xf0 | (charCode >>> 18);
-				bytes[position++] = 0x80 | ((charCode >>> 12) & 0x3f);
-				bytes[position++] = 0x80 | ((charCode >>> 6) & 0x3f);
-				bytes[position++] = 0x80 | (charCode & 0x3f);
-			} else if (charCode < 0x4000000) {
-				// Must never appear in a valid UTF-8 sequence
-				bytes[position++] = 0xf8 | (charCode >>> 24);
-				bytes[position++] = 0x80 | ((charCode >>> 18) & 0x3f);
-				bytes[position++] = 0x80 | ((charCode >>> 12) & 0x3f);
-				bytes[position++] = 0x80 | ((charCode >>> 6) & 0x3f);
-				bytes[position++] = 0x80 | (charCode & 0x3f);
-			} else {
-				// Must never appear in a valid UTF-8 sequence
-				bytes[position++] = 0xfc | (charCode >>> 30);
-				bytes[position++] = 0x80 | ((charCode >>> 24) & 0x3f);
-				bytes[position++] = 0x80 | ((charCode >>> 18) & 0x3f);
-				bytes[position++] = 0x80 | ((charCode >>> 12) & 0x3f);
-				bytes[position++] = 0x80 | ((charCode >>> 6) & 0x3f);
-				bytes[position++] = 0x80 | (charCode & 0x3f);
-			}
-			return position;
-		}
-
-		// Converts a string into a byte array using UTF-8 encoding.
-		function bytesFromText(text) {	// String ⇒ Uint8Array
-			var length = 0;
-			for (var i = 0; i < text.length; i++)
-				length += utf8CharLength(text.charCodeAt(i));
-
-			var offset = 0;
-			var bytes = new Uint8Array(length);
-			for (var i = 0; i < text.length; i++)
-				offset = addUtf8CharToBytes(bytes, offset, text.charCodeAt(i));
-
-			return bytes;
-		}
-	</script>
-</div></div></div>
-
+    <script>
+        MathJax = {
+            svg: {
+                fontCache: 'local'
+            }
+        };
+    </script>
+    <span style="display: inline;"><button onclick="prevSlide()">Prev</button></span>
+    <span style="display: inline;"><button onclick="nextSlide()">Next</button></span>
+    <span style="display: inline;"><p id="slidenums"></p></span>
+    <div class="container" style="margin-top: 50px">
+        <div class="slide">
+            <div class="desc">
+                <h1>Spectral Clustering with Laplacian Eigenmaps</h1>
+                <h3>MATH 7203 Mini-Project</h3>
+                <h4>Anirudh Kamath</h4>
+                <canvas id="scatterLine" onclick="scatterLine()"></canvas>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h1>Limitations of K-Nearest Neighbors</h1>
+            <h5>Linear algorithms don't work when a nonlinear transformation is required. Case in point - concentric circles</h5>
+            <div class="row">
+                <div class="col m6"><canvas style="width: 50%" id="concentricBad" onclick="concentricBad()"></canvas></div>
+                <div class="col m6"><canvas style="width: 50%" id="concentricGood" onclick="concentricGood()"></canvas></div>
+            </div>
+            <h3>Spectral clustering</h3>
+            <h5>- Derives a graph from the given data and uses the eigenvectors of this graph's Laplacian matrix to partition the data.</h5>
+            <h5>- Captures the "geometry" of the data and part of a broader subclass of
+                <b>manifold learning</b>.
+            </h5>
+            <h5>- Other methods in this umbrella include t-SNE and Isomap</h5>
+        </div>
+
+        <div class="slide">
+            <h1>Step 1: Construct Weight Matrix from given data</h1>
+            <h5>We take our data \(X\) as a set of \(n\) row vectors...</h5>
+            <div class="math-animate" toDisplay="X = \begin{bmatrix} - & \vec{x}_1 & - \\ - & \vec{x}_2 & - \\ & \vdots \\ - & \vec{x}_n & - \end{bmatrix}" scale="20" style="position: relative; top: 20px"></div>
+        </div>
+
+        <div class="slide">
+            <h1>Step 1: Construct Weight Matrix from given data</h1>
+            <h5>We take our data \(X\) as a set of \(n\) row vectors...</h5>
+            <div class="math-animate dont-animate" toDisplay="X = \begin{bmatrix} - & \vec{x}_1 & - \\ - & \vec{x}_2 & - \\ & \vdots \\ - & \vec{x}_n & - \end{bmatrix}" scale="20" style="position: relative; top: 20px"></div>
+            <br><br>
+            <h5>... and form some sort of weight matrix</h5>
+            <div class="math-animate" toDisplay="W = \left[\begin{array}{c|c c c c}
+            & x_1 & x_2 & \dots & x_n \\ 
+            \hline
+            x_1 & w_{11} & w_{12} & \dots & w_{1n} \\
+            x_2 & w_{21} & w_{22} & \dots & w_{2n} \\
+            \vdots & \vdots & \vdots & \ddots  & \vdots \\
+            x_n & w_{n1} & w_{n2} & \dots & w_{nn}
+            \end{array}\right]" scale="15" style="position: relative; top: 20px"></div>
+            <br><br>
+            <h5>Where high weight indicates high similarity, and low weight indicates low similarity between \(x_i\) and \(x_j\)</h5>
+            <h5>Similar to a graph <b>Adjacency Matrix</b> where row/column indices correspond to nodes, and the values at those indices correspond to edges/edge weights</h5>
+        </div>
+
+        <div class="slide">
+            <h1>Step 1b: Similarity Metrics</h1>
+            <h3>Conditional Connectivity</h3>
+            <div class="math-animate" toDisplay="w_{ij}= 
+        \begin{cases}
+            1,& \left\lVert x_i - x_j\right\rVert \leq \sigma\\
+            0,              & \text{otherwise}
+        \end{cases}" scale="35" style="position: relative; top: 20px"></div>
+            <br><br>
+            <h5>If \(x_i\) and \(x_j\) are "close" to each other by some metric \(\sigma\), then we say they are connected in the graph. Otherwise, they share no connection</h5>
+        </div>
+
+        <div class="slide">
+            <h1>Step 1b: Similarity Metrics</h1>
+            <h3>Conditional Connectivity</h3>
+            <div class="math-animate dont-animate" toDisplay="w_{ij}= 
+        \begin{cases}
+            1,& \left\lVert x_i - x_j\right\rVert \leq \sigma\\
+            0,              & \text{otherwise}
+        \end{cases}" scale="35" style="position: relative; top: 20px"></div>
+            <br><br>
+            <h5>If \(x_i\) and \(x_j\) are "close" to each other by some metric \(\sigma\), then we say they are connected in the graph. Otherwise, they share no connection</h5>
+            <h3>Fully-Connected Graph with Varying Edge Weights</h3>
+            <div class="math-animate" toDisplay="w_{ij}= \exp(-\frac{\left\lVert x_i - x_j\right\rVert^2}{2\sigma^2})" scale="35" style="position: relative; top: 20px"></div>
+            <br><br>
+            <h4>Main Idea: if \(x_i \tilde{=} x_j, w_{ij} \rightarrow 1\); else \(w_{ij} \rightarrow 0\)</h4>
+            <h5>\(\sigma\) is an arbitrary constant to help define what "closeness" means between \(x_i\) and \(x_j\)</h5>
+        </div>
+        <div class="slide">
+            <h1>Step 2: Construct Normalized Laplacian</h1>
+            <h4>First, we compute the diagonal degree matrix, \(D\), where every entry is the sum of the edge weights of that given node</h4>
+            <div class="math-animate" toDisplay="W = \begin{bmatrix} 0 & 1 & 0 \\ 1 & 0 & 1 \\ 0 & 1 & 0 \end{bmatrix} \rightarrow D = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 1 \end{bmatrix}" scale="20"></div>
+        </div>
+        <div class="slide">
+            <h1>Step 2: Construct Normalized Laplacian</h1>
+            <h4>First, we compute the diagonal degree matrix, \(D\), where every entry is the sum of the edge weights of that given node</h4>
+            <div class="math-animate dont-animate" toDisplay="W = \begin{bmatrix} 0 & 1 & 0 \\ 1 & 0 & 1 \\ 0 & 1 & 0 \end{bmatrix} \rightarrow D = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 1 \end{bmatrix}" scale="20"></div>
+            <h4>Then we compute the graph <b>Laplacian</b>, \(L\)</h4>
+            <div class="math-animate" toDisplay="L = D - W" scale="20"></div>
+        </div>
+        <div class="slide">
+            <h1>Step 2: Construct Normalized Laplacian</h1>
+            <h4>First, we compute the diagonal degree matrix, \(D\), where every entry is the sum of the edge weights of that given node</h4>
+            <div class="math-animate dont-animate" toDisplay="W = \begin{bmatrix} 0 & 1 & 0 \\ 1 & 0 & 1 \\ 0 & 1 & 0 \end{bmatrix} \rightarrow D = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 1 \end{bmatrix}" scale="20"></div>
+            <h4>Then we compute the graph <b>Laplacian</b>, \(L\)</h4>
+            <div class="math-animate dont-animate" toDisplay="L = D - W" scale="20"></div>
+            <h4>Or the normalized graph Laplacian, \(\mathcal{L}\)</h4>
+            <div class="math-animate" toDisplay="\mathcal{L} = I_n - D^{-1/2}WD^{-1/2} \\= D^{-1/2}LD^{-1/2}" scale="20"></div>
+        </div>
+        <div class="slide">
+            <h1>Step 3: Compute Laplacian Eigenvectors</h1>
+            <h4>\(\phi_1, \phi_2, \dots, \phi_k\) corresponding to the \(k\) smallest eigenvalues of \(L\) or \(\mathcal{L}\)</h4>
+            <div class="math-animate" toDisplay="\mathcal{L}\phi_l = \lambda_l\phi_l,\;1 \leq l \leq n" scale="40"></div>
+        </div>
+        <div class="slide">
+            <h1>Step 3: Compute Laplacian Eigenvectors</h1>
+            <h4>\(\phi_1, \phi_2, \dots, \phi_k\) corresponding to the \(k\) smallest eigenvalues of \(L\) or \(\mathcal{L}\)</h4>
+            <div class="math-animate dont-animate" toDisplay="\mathcal{L}\phi_l = \lambda_l\phi_l,\;1 \leq l \leq n" scale="40"></div>
+            <h4>\(\phi_1, \phi_2, \dots, \phi_n\) then form an orthonormal basis in \(R^n\) with eigenvalues sorted from lowest to highest:</h4>
+            <div class="math-animate" toDisplay="\lambda_1 \leq \lambda_2 \leq \lambda_3 \leq \dots \leq \lambda_n" scale="40"></div>
+        </div>
+        <div class="slide">
+            <h1>Step 3: Compute Laplacian Eigenvectors</h1>
+            <h4>\(\phi_1, \phi_2, \dots, \phi_k\) corresponding to the \(k\) smallest eigenvalues of \(L\) or \(\mathcal{L}\)</h4>
+            <div class="math-animate dont-animate" toDisplay="\mathcal{L}\phi_l = \lambda_l\phi_l,\;1 \leq l \leq n" scale="40"></div>
+            <h4>\(\phi_1, \phi_2, \dots, \phi_n\) then form an orthonormal basis in \(R^n\) with eigenvalues sorted from lowest to highest:</h4>
+            <div class="math-animate dont-animate" toDisplay="\lambda_1 \leq \lambda_2 \leq \lambda_3 \leq \dots \leq \lambda_n" scale="40"></div>
+            <h4>We then form a matrix \(\Phi\) with </h4>
+            <div class="math-animate" toDisplay="\Phi = \begin{bmatrix} - & \vec{\phi}_1 & - \\ - & \vec{\phi}_2 & - \\ & \vdots \\ - & \vec{\phi}_n & - \end{bmatrix}"></div>
+            <h4><b>Theorem</b>: If the graph \(W\) has \(K\) connected components, then \(\mathcal{L}\) has \(K\) eigenvectors with an eigenvalue of 0.</h4>
+        </div>
+    </div>
+
+    <script src="graphing.js"></script>
+    <script src="mathDisplay.js"></script>
 </body>
+
 </html>
