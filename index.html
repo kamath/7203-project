@@ -253,7 +253,6 @@
         <div class="slide">
             <h1>Example - NBA Matchup Clustering</h1>
             <div class="row">
-                <div class="col m6"><canvas style="width: 50%; z-index: 1005" id="NBA" onclick="NBA()"></canvas></div>
                 <div class="col m6">
                     <h5>- The NBA Stats API provides various advanced statistics using player tracking systems</h5>
                     <h5>- Matchup data allows us to say "Player \(P_i\) guarded Player \(P_j\) for \(m\) minutes"</h5>
@@ -261,6 +260,7 @@
                     <h5>- Caveat - this graph is directed, and therefore the adjacency matrix is <u>asymmetric</u>.</h5>
                     <h5>- I made the graph undirected by combining offensive/defensive matchup time, i.e. if \(P_x\) guarded \(P_y\) for \(m_{xy}\), and \(P_y\) guarded \(P_x\) for \(m_{yx}\) minutes, then \(W_{ij} = m_{xy} + m_{yx}\)</h5>
                 </div>
+                <div class="col m6"><canvas style="width: 50%; z-index: 1005" id="NBA" onclick="NBA()"></canvas></div>
             </div>
             <h4>Spectral clustering found a clear breakdown between small players (point/shooting guards), medium players (wings), and big players (power forwards/centers)</h4>
         </div>
