@@ -87,7 +87,6 @@
     <span style="display: inline;"><button class="btn black" onclick="nextSlide()"><i class="material-icons">navigate_next</i></button></span>
     <span style="display: inline;"><p id="slidenums"></p></span>
     <div class="container" style="margin-top: 50px; margin-bottom: 50px;">
-
         <div class="slide">
             <div class="desc">
                 <h1><a class="black-text animation-math">\(\text{Spectral Clustering with Laplacian Eigenmaps}\)</a></h1>
@@ -242,15 +241,28 @@
         <div class="slide">
             <h1>Example - NBA Matchup Clustering</h1>
             <div class="row">
-                <div class="col m6"><canvas style="width: 50%; z-index: 1005" id="NBA" onclick="NBA()"></canvas></div>
-                <div class="col m6">
-                    <h5>- Using NBA Matchup Data, I created a graph such that players are connected if they defend each other in a game</h5>
-                    <h5>- Edge weights were defined by the normalized time they spent guarding each other</h5>
-                    <h5>- I made the graph undirected by combining offensive/defensive matchup time</h5>
-                    <h6>--(i.e. if a player was defending one player but was not guarded by that same player, that matchup data was concatenated anyway)</h6>
-                    <h5>- Spectral clustering found a clear breakdown between small players (point/shooting guards), wings, and big players (power forwards/centers)</h5>
+                <div class="col m12">
+                    <h5>- The NBA Stats API provides various advanced statistics using player tracking systems</h5>
+                    <h5>- Matchup data allows us to say "Player \(P_i\) guarded Player \(P_j\) for \(m\) minutes"</h5>
+                    <h5>- Sounds like a graph with \(m\) as an edge weight and players as nodes!</h5>
+                    <h5>- Caveat - this graph is directed, and therefore the adjacency matrix is <u>asymmetric</u>.</h5>
+                    <h5>- I made the graph undirected by combining offensive/defensive matchup time, i.e. if \(P_x\) guarded \(P_y\) for \(m_{xy}\), and \(P_y\) guarded \(P_x\) for \(m_{yx}\) minutes, then \(W_{ij} = m_{xy} + m_{yx}\)</h5>
                 </div>
             </div>
+        </div>
+        <div class="slide">
+            <h1>Example - NBA Matchup Clustering</h1>
+            <div class="row">
+                <div class="col m6"><canvas style="width: 50%; z-index: 1005" id="NBA" onclick="NBA()"></canvas></div>
+                <div class="col m6">
+                    <h5>- The NBA Stats API provides various advanced statistics using player tracking systems</h5>
+                    <h5>- Matchup data allows us to say "Player \(P_i\) guarded Player \(P_j\) for \(m\) minutes"</h5>
+                    <h5>- Sounds like a graph with \(m\) as an edge weight and players as nodes!</h5>
+                    <h5>- Caveat - this graph is directed, and therefore the adjacency matrix is <u>asymmetric</u>.</h5>
+                    <h5>- I made the graph undirected by combining offensive/defensive matchup time, i.e. if \(P_x\) guarded \(P_y\) for \(m_{xy}\), and \(P_y\) guarded \(P_x\) for \(m_{yx}\) minutes, then \(W_{ij} = m_{xy} + m_{yx}\)</h5>
+                </div>
+            </div>
+            <h4>Spectral clustering found a clear breakdown between small players (point/shooting guards), medium players (wings), and big players (power forwards/centers)</h4>
         </div>
         <div class="slide">
             <h1>Full Code</h1>

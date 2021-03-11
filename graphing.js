@@ -97,7 +97,7 @@ function concentricBad() {
                 },
                 title: {
                     display: true,
-                    text: 'k-NN Clustering',
+                    text: 'k-Means Clustering',
                     fontSize: 20
                 },
                 scales: {
@@ -238,7 +238,7 @@ function moonsBad() {
                 },
                 title: {
                     display: true,
-                    text: 'k-NN Clustering',
+                    text: 'k-Means Clustering',
                     fontSize: 20
                 },
                 scales: {
@@ -409,7 +409,7 @@ function NBA() {
                             console.log("TOOLTIPITEM", tooltipItem, data)
                             var label = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index].label;
                             console.log("LABEL", label)
-        
+
                             if (label) {
                                 label += ': ';
                             }
